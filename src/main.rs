@@ -1,7 +1,5 @@
 use sqlx::sqlite::SqlitePoolOptions;
 use std::env;
-use std::fs::OpenOptions;
-use std::io::Write;
 use std::path::PathBuf;
 use std::time::Instant;
 
@@ -20,14 +18,21 @@ async fn main() -> anyhow::Result<()> {
     println!("Connecting to SQLite database took: {:.3}s", db_start.elapsed().as_secs_f64());
 
     let query_start = Instant::now();
-    let rows = sqlx::query!("SELECT timestamp, command FROM history ORDER BY timestamp ASC")
+    let rows = sqlx::query!("SELECT timestamp, command, cwd FROM history ORDER BY timestamp ASC")
         .fetch_all(&pool)
         .await?;
     println!("Reading Atuin history took: {:.3}s", query_start.elapsed().as_secs_f64());
 
     let mut entries: Vec<String> = Vec::new();
     for row in rows {
-        let line = format!("- cmd: {}\n  when: {}\n", row.command, row.timestamp / 1_000_000_000);
+        let mut line = format!("- cmd: {}\n  when: {}\n", row.command, row.timestamp / 1_000_000_000);
+
+         if &row.cwd != "unknown" {
+            if !row.cwd.is_empty() {
+                line.push_str(&format!("  paths:\n    - {}\n", row.cwd));
+            }
+        }
+
         entries.push(line);
     }
 

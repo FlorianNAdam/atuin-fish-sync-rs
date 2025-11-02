@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT timestamp, command FROM history ORDER BY timestamp ASC",
+  "query": "SELECT timestamp, command, cwd FROM history ORDER BY timestamp ASC",
   "describe": {
     "columns": [
       {
@@ -12,6 +12,11 @@
         "name": "command",
         "ordinal": 1,
         "type_info": "Text"
+      },
+      {
+        "name": "cwd",
+        "ordinal": 2,
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -19,8 +24,9 @@
     },
     "nullable": [
       false,
+      false,
       false
     ]
   },
-  "hash": "01827e66f48509349f9f8499a4e6a86cdfc356cb9c624e85523925b87147383d"
+  "hash": "ab826ddd4509b3f9bb4f91795d639e4d15e5e5bdf700c727f6b38ac7d222caad"
 }
