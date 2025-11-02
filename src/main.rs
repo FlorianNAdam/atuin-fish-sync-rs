@@ -62,7 +62,6 @@ async fn main() -> anyhow::Result<()> {
 
     let mut entries: Vec<Entry> = entries_map.into_values().collect();
     entries.sort_by_key(|e| e.timestamp);
-    entries.reverse();
 
     let write_start = Instant::now();
     let fish_history_path = PathBuf::from(format!("{}/.local/share/fish/fish_history", home_dir));
