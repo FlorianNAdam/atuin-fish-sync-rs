@@ -76,7 +76,8 @@ async fn main() -> anyhow::Result<()> {
 fn write_fish_history(entries: &[Entry], path: &PathBuf) -> std::io::Result<()> {
     let mut content = String::new();
     for entry in entries {
-        content.push_str(&format!("- cmd: {}\n  when: {}\n", entry.command, entry.timestamp));
+        let command = entry.command.replace("\n", "\\n");
+        content.push_str(&format!("- cmd: {}\n  when: {}\n", command, entry.timestamp));
         if !entry.paths.is_empty() {
             content.push_str("  paths:\n");
             for path in &entry.paths {
