@@ -27,8 +27,7 @@ async fn main() -> anyhow::Result<()> {
 
     let mut entries: Vec<String> = Vec::new();
     for row in rows {
-        let escaped_cmd = escape_fish_cmd(&row.command);
-        let line = format!("- cmd: {}\n  when: {}\n", escaped_cmd, row.timestamp / 1_000_000_000);
+        let line = format!("- cmd: {}\n  when: {}\n", row.command, row.timestamp / 1_000_000_000);
         entries.push(line);
     }
 
@@ -39,15 +38,6 @@ async fn main() -> anyhow::Result<()> {
 
     println!("Total execution time: {:.3}s", total_start.elapsed().as_secs_f64());
     Ok(())
-}
-
-fn escape_fish_cmd(cmd: &str) -> String {
-    if cmd.contains(&[':', '"', '\'', '\n'][..]) {
-        let escaped = cmd.replace('\'', "'\\''");
-        format!("'{}'", escaped)
-    } else {
-        cmd.to_string()
-    }
 }
 
 fn write_fish_history(entries: &[String], path: &PathBuf) -> std::io::Result<()> {
