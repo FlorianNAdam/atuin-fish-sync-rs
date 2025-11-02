@@ -28,12 +28,12 @@
       in
       {
         packages = {
-          atuin-fish-sync = atuin-fish-sync-rs;
+          atuin-fish-sync-rs = atuin-fish-sync-rs;
           default = atuin-fish-sync-rs;
         };
 
-        nixosModules.atuin-fish-sync-rs =
-          { lib, ... }:
+        homeModules.atuin-fish-sync-rs =
+          { lib, config, ... }:
           {
             options.programs.atuin-fish-sync-rs.enable = lib.mkOption {
               type = lib.types.bool;
@@ -42,32 +42,23 @@
             };
 
             config =
-              {
-                config,
-                lib,
-                ...
-              }:
               let
-                sync = "${atuin-fish-sync-rs}/bin/atuin-fish-sync";
+                sync = "${atuin-fish-sync-rs}/bin/atuin-fish-sync-rs";
               in
-              {
-                options = { };
-                config = lib.mkIf config.programs.atuin-fish-sync-rs.enable {
-                  environment.systemPackages = [ sync ];
+              lib.mkIf config.programs.atuin-fish-sync-rs.enable {
+                home.packages = [ sync ];
 
-                  programs.fish.interactiveShellInit = ''
-                    # Run atuin-fish-sync-rs once per shell startup
-                    ${sync} &>/dev/null &
-                  '';
+                programs.fish.interactiveShellInit = ''
+                  ${sync} &>/dev/null &
+                '';
 
-                  programs.fish.initExtra = ''
-                    function _sync_atuin_fish --on-event fish_postexec
-                        if not set -q fish_private_mode
-                            ${sync} &>/dev/null &
-                        end
-                    end
-                  '';
-                };
+                programs.fish.initExtra = ''
+                  function _sync_atuin_fish --on-event fish_postexec
+                      if not set -q fish_private_mode
+                          ${sync} &>/dev/null &
+                      end
+                  end
+                '';
               };
           };
 
