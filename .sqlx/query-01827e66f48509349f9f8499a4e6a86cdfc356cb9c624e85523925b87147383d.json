@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT timestamp, command FROM history ORDER BY timestamp ASC",
+  "describe": {
+    "columns": [
+      {
+        "name": "timestamp",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "command",
+        "ordinal": 1,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "01827e66f48509349f9f8499a4e6a86cdfc356cb9c624e85523925b87147383d"
+}

@@ -1,0 +1,15 @@
+/target
+.envrc.private
+.direnv
+.devenv
+/rbg_client
+/recordings
+/logs
+result
+
+
+# Added by cargo
+#
+# already existing elements were commented out
+
+#/target
