@@ -26,7 +26,9 @@
             ...
           }:
           let
-            sync = self.packages.${pkgs.system}.atuin-fish-sync-rs;
+            system = pkgs.stdenv.hostPlatform.system;
+
+            sync = self.packages.${system}.atuin-fish-sync-rs;
           in
           {
             options.programs.atuin-fish-sync-rs.enable = lib.mkOption {
