@@ -41,11 +41,12 @@
               home.packages = [ sync ];
 
               programs.fish.interactiveShellInit = ''
-                ${sync}/bin/atuin-fish-sync-rs &>/dev/null &
+                ${sync}/bin/atuin-fish-sync-rs &>/dev/null
+                history merge
 
                 function _sync_atuin_fish --on-event fish_postexec
                     if not set -q fish_private_mode
-                        ${sync}/bin/atuin-fish-sync-rs &>/dev/null &
+                        ${sync}/bin/atuin-fish-sync-rs &>/dev/null
                     end
                 end
               '';
