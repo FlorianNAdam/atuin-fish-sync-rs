@@ -1,6 +1,8 @@
 use sqlx::sqlite::SqlitePoolOptions;
 use std::collections::HashMap;
 use std::env;
+use std::fs::{rename, File};
+use std::io::{Write, BufWriter};
 use std::path::PathBuf;
 use std::time::Instant;
 
@@ -73,18 +75,37 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+fn escape_yaml(s: &str) -> String {
+    s.replace('\\', "\\\\")
+     .replace('"', "\\\"")
+     .replace('\n', "\\n")
+}
+
 fn write_fish_history(entries: &[Entry], path: &PathBuf) -> std::io::Result<()> {
-    let mut content = String::new();
-    for entry in entries {
-        let command = entry.command.replace("\n", "\\n");
-        content.push_str(&format!("- cmd: {}\n  when: {}\n", command, entry.timestamp));
-        if !entry.paths.is_empty() {
-            content.push_str("  paths:\n");
-            for path in &entry.paths {
-                content.push_str(&format!("    - {}\n", path));
+    let tmp_path = path.with_extension("tmp");
+
+    {
+        let file = File::create(&tmp_path)?;
+        let mut writer = BufWriter::new(file);
+
+        for entry in entries {
+            let command = escape_yaml(&entry.command);
+            writeln!(writer, "- cmd: \"{}\"", command)?;
+            writeln!(writer, "  when: {}", entry.timestamp)?;
+
+            if !entry.paths.is_empty() {
+                writeln!(writer, "  paths:")?;
+                for path in &entry.paths {
+                    writeln!(writer, "    - {}", path)?;
+                }
             }
         }
+
+        writer.flush()?;               // flush BufWriter
+        writer.get_ref().sync_all()?;  // fsync file
     }
-    std::fs::write(path, content)?;
+
+    rename(tmp_path, path)?; // atomic replace on Unix
+
     Ok(())
 }
