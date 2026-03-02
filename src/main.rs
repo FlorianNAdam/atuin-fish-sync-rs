@@ -96,7 +96,8 @@ fn write_fish_history(entries: &[Entry], path: &PathBuf) -> std::io::Result<()> 
             if !entry.paths.is_empty() {
                 writeln!(writer, "  paths:")?;
                 for path in &entry.paths {
-                    writeln!(writer, "    - {}", path)?;
+                    let path = escape_yaml(path);
+                    writeln!(writer, "    - \"{}\"", path)?;
                 }
             }
         }
