@@ -90,14 +90,14 @@ fn write_fish_history(entries: &[Entry], path: &PathBuf) -> std::io::Result<()> 
 
         for entry in entries {
             let command = escape_yaml(&entry.command);
-            writeln!(writer, "- cmd: \"{}\"", command)?;
+            writeln!(writer, "- cmd: {}", command)?;
             writeln!(writer, "  when: {}", entry.timestamp)?;
 
             if !entry.paths.is_empty() {
                 writeln!(writer, "  paths:")?;
                 for path in &entry.paths {
                     let path = escape_yaml(path);
-                    writeln!(writer, "    - \"{}\"", path)?;
+                    writeln!(writer, "    - {}", path)?;
                 }
             }
         }
